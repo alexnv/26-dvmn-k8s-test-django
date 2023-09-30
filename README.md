@@ -55,6 +55,32 @@ minikube image build -t имя_образа backend_main_django/
 ```
 kubectl apply -f kuber/
 ```
+Установите и настройте [Helm](https://helm.sh/):
+```
+sudo snap install helm --classic
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm install postgres-15 bitnami/postgresql
+helm list
+```
+
+Следуя инструкциям, появившимся после создания пода базы данных, создайте создайте базу данных и пользователя:
+```
+CREATE DATABASE yourdbname;
+CREATE USER youruser WITH ENCRYPTED PASSWORD 'yourpass';
+GRANT ALL PRIVILEGES ON DATABASE yourdbname TO youruser;
+ALTER USER youruser SUPERUSER;
+```
+
+Для применения миграций базы данных используйте команду:
+```
+kubectl apply -f kubernetes/test-django-migrate.yaml
+```
+
+Для создания суперпользователя используйте команду:
+```
+kubectl run ... -ti -- bash
+```
 
 Узнайте IP-адрес minikube:
 ```
