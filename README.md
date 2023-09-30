@@ -32,3 +32,42 @@ $ docker-compose run web ./manage.py createsuperuser
 `ALLOWED_HOSTS` -- настройка Django со списком разрешённых адресов. Если запрос прилетит на другой адрес, то сайт ответит ошибкой 400. Можно перечислить несколько адресов через запятую, например `127.0.0.1,192.168.0.1,site.test`. [Документация Django](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
+
+## Развертывание Kubernetes кластера с помощью Minikube
+
+Установите [minikube](https://kubernetes.io/ru/docs/tasks/tools/install-minikube/) и [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/).
+Запустите minikube:
+```
+minikube start
+```
+
+Активируйте Ingress:
+```
+minikube addons enable ingress
+```
+
+Создайте образ Django-приложения в кластере командой:
+```
+minikube image build -t имя_образа backend_main_django/
+```
+Отредактируйте файл `test-django-configmap-example.yaml`, подставив свои значения переменных окружения и переименовав файл в `test-django-configmap.yaml`.
+Запустите Django-приложение в кластере командой:
+```
+kubectl apply -f kuber/
+```
+
+Узнайте IP-адрес minikube:
+```
+minikube ip
+```
+
+Приложение будет доступно по адресу `star-burger.test` после добавления в файл `/etc/hosts` строки:
+```
+your_minikube_ip star-burger.test
+```
+
+После внесения изменений в конфигурационный файл `test-django-configmap.yaml` введите следующие команды:
+```
+kubectl apply -f kuber/
+kubectl rollout restart -f kuber/
+```

@@ -217,3 +217,5 @@ dmypy.json
 cython_debug/
 
 .idea
+
+kuber/test-django-configmap.yaml
