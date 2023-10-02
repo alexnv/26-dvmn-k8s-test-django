@@ -9,7 +9,7 @@ spec:
   type: ClusterIP
   ports:
     - name: external-port
-      port: 25257
+      port: 80
       targetPort: 80
       protocol: TCP
   selector:
